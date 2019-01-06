@@ -10,7 +10,7 @@ Codes Key:
   PONG: 4,
 */
 
-class IPCTransport extends EventEmitter {
+module.exports = class IPCTransport extends EventEmitter {
   constructor(clientID) {
     super();
     this.clientID = clientID;
@@ -50,5 +50,3 @@ class IPCTransport extends EventEmitter {
     this.socket.end();
   }
 }
-
-module.exports = IPCTransport;
