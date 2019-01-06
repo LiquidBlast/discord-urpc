@@ -1,5 +1,5 @@
-const { createConnection } = require('net');
 const EventEmitter         = require('events');
+const util                 = require('./util.js');
 
 /*
 Codes Key:
@@ -18,12 +18,12 @@ class IPCTransport extends EventEmitter {
   }
 
   async connect() {
-    const socket = this.socket = await getIPC();
+    const socket = this.socket = await util.getIPC();
     this.emit('open');
-    socket.write(encode(0, { v: 1, client_id: this.clientID }));
+    socket.write(util.encode(0, { v: 1, client_id: this.clientID }));
     socket.pause();
     socket.on('readable', () => {
-      decode(socket, ({ op, data }) => {
+      util.decode(socket, ({ op, data }) => {
         switch (op) {
           case 3: this.send(data, 4); 
             break;
@@ -43,7 +43,7 @@ class IPCTransport extends EventEmitter {
 
   onClose(e) { this.emit('close', e); }
 
-  send(data, op = 1) { this.socket.write(encode(op, data)); } //frame
+  send(data, op = 1) { this.socket.write(util.encode(op, data)); } //frame
 
   close() {
     this.send({}, 2); //close
@@ -51,62 +51,4 @@ class IPCTransport extends EventEmitter {
   }
 }
 
-function encode(op, data) {
-  data = JSON.stringify(data);
-  const len = Buffer.byteLength(data);
-  const packet = Buffer.alloc(8 + len);
-  packet.writeInt32LE(op, 0);
-  packet.writeInt32LE(len, 4);
-  packet.write(data, 8, len);
-  return packet;
-}
-
-let working = { full: '', op: undefined, };
-
-function decode(socket, callback) {
-  const packet = socket.read();
-  if (!packet) return;
-
-  let op = working.op;
-  let raw;
-  if (working.full === '') {
-    op = working.op = packet.readInt32LE(0);
-    const len = packet.readInt32LE(4);
-    raw = packet.slice(8, len + 8);
-  } else { raw = packet.toString(); }
-
-  try {
-    let data = JSON.parse(working.full + raw);
-    callback({ op, data });
-    working.full = '';
-    working.op = undefined;
-  } catch (err) { working.full += raw; }
-
-  decode(socket, callback);
-}
-
-function getIPCPath(id) {
-  if (process.platform === 'win32') return `\\\\?\\pipe\\discord-ipc-${id}`;
-  const env = process.env;
-  const prefix = env.XDG_RUNTIME_DIR || env.TMPDIR || env.TMP || env.TEMP || '/tmp';
-  return `${prefix.replace(/\/$/, '')}/discord-ipc-${id}`;
-}
-
-function getIPC(id = 0) {
-  return new Promise((resolve, reject) => {
-    const path = getIPCPath(id);
-    const onerror = () => {
-      if (id < 10) resolve(getIPC(id + 1));
-      else reject(new Error('Could not connect'));
-    };
-    const sock = createConnection(path, () => {
-      sock.removeListener('error', onerror);
-      resolve(sock);
-    });
-    sock.once('error', onerror);
-  });
-}
-
 module.exports = IPCTransport;
-module.exports.encode = encode;
-module.exports.decode = decode;
