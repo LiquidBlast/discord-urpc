@@ -1,5 +1,5 @@
-const EventEmitter         = require('events');
-const util                 = require('./util.js');
+const EventEmitter               = require('events');
+const { encode, decode, getIPC } = require('./util.js');
 
 /*
 Codes Key:
@@ -18,12 +18,12 @@ module.exports = class IPCTransport extends EventEmitter {
   }
 
   async connect() {
-    const socket = this.socket = await util.getIPC();
+    const socket = this.socket = await getIPC();
     this.emit('open');
-    socket.write(util.encode(0, { v: 1, client_id: this.clientID }));
+    socket.write(encode(0, { v: 1, client_id: this.clientID }));
     socket.pause();
     socket.on('readable', () => {
-      util.decode(socket, ({ op, data }) => {
+      decode(socket, ({ op, data }) => {
         switch (op) {
           case 3: this.send(data, 4); 
             break;
@@ -43,7 +43,7 @@ module.exports = class IPCTransport extends EventEmitter {
 
   onClose(e) { this.emit('close', e); }
 
-  send(data, op = 1) { this.socket.write(util.encode(op, data)); } //frame
+  send(data, op = 1) { this.socket.write(encode(op, data)); } //frame
 
   close() {
     this.send({}, 2); //close
