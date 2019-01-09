@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const DiscordIPC   = require('./DiscordIPC.js');
-const util         = require('./util.js');
+const { uuid }     = require('./util.js');
 
 module.exports = class DiscordRPC extends EventEmitter {
     constructor({ clientID, debug }) {
@@ -26,5 +26,5 @@ module.exports = class DiscordRPC extends EventEmitter {
         this.discordIPC.connect();
     }
 
-    send(cmd, args) { this.discordIPC.send({ cmd, args, nonce: util.uuid() }); }
+    send(cmd, args) { this.discordIPC.send({ cmd, args, nonce: uuid() }); }
 }
