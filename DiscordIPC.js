@@ -23,7 +23,7 @@ module.exports = class IPCTransport extends EventEmitter {
     socket.write(encode(0, { v: 1, client_id: this.clientID }));
     socket.pause();
     socket.on('readable', () => {
-      decode(socket, ({ op, data }) => {
+      decode(socket, ({op, data}) => {
         switch (op) {
           case 3: this.send(data, 4); 
             break;
