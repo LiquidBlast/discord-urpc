@@ -44,7 +44,7 @@ module.exports = class util {
         return new Promise((resolve, reject) => {
             const path = getIPCPath(id);
             const onerror = () => {
-                if (id < 10) resolve(getIPC(id + 1));
+                if (id < 10) resolve(util.getIPC(id + 1));
                 else reject(new Error('[Discord RPC] Could not connect'));
             };
             const sock = createConnection(path, () => {
