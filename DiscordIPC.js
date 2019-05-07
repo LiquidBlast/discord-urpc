@@ -49,4 +49,4 @@ module.exports = class IPCTransport extends EventEmitter {
     this.send({}, 2); //close
     this.socket.end();
   }
-}
+};
