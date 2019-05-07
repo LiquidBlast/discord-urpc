@@ -25,4 +25,4 @@ module.exports = class DiscordRPC extends EventEmitter {
     }
 
     send(cmd, args) { this.discordIPC.send({ cmd, args, nonce: require('./util.js').uuid() }); }
-}
+};
