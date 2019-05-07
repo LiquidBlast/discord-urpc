@@ -5,7 +5,7 @@ const getIPCPath = (id) => {
     if (process.platform === 'win32') return `\\\\?\\pipe\\discord-ipc-${id}`;
     const prefix = process.env.XDG_RUNTIME_DIR || process.env.TMPDIR || process.env.TMP || process.env.TEMP || '/tmp';
     return `${prefix.replace(/\/$/, '')}/discord-ipc-${id}`;
-}
+};
 
 module.exports = class util {
     static encode(op, data) {
@@ -71,4 +71,4 @@ module.exports = class util {
         }
         return uuid;
     }
-}
+};
