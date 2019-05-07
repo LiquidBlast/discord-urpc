@@ -7,7 +7,7 @@ const getIPCPath = (id) => {
     return `${prefix.replace(/\/$/, '')}/discord-ipc-${id}`;
 };
 
-module.exports = class util {
+module.exports = class Util {
     static encode(op, data) {
         data = JSON.stringify(data);
         const len = Buffer.byteLength(data);
