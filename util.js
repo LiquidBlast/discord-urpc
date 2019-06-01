@@ -1,5 +1,4 @@
 const { createConnection } = require('net');
-const util                 = require('./util.js');
 
 const getIPCPath = (id) => {
     if (process.platform === 'win32') return `\\\\?\\pipe\\discord-ipc-${id}`;
@@ -37,7 +36,7 @@ module.exports = class Util {
             working.op = undefined;
         } catch (err) { working.full += raw; }
 
-        util.decode(socket, callback);
+        Util.decode(socket, callback);
     }
 
     static getIPC(id = 0) {
