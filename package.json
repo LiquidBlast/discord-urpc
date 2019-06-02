@@ -3,5 +3,6 @@
   "version": "1.0.5",
   "description": "Fork of discord-urpc for use internally at LiquidBlast",
   "author": "Rellfy",
-  "license": "MIT"
+  "license": "MIT",
+  "types": "types/index.d.ts"
 }
