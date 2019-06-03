@@ -6,9 +6,11 @@ module.exports = class DiscordRPC extends EventEmitter {
         super();
         this.discordIPC = new DiscordIPC(clientID);
 
-        this.discordIPC.on('open', () =>       { if (debug) console.log('[Discord RPC] Status: Opened'); });
-        this.discordIPC.on('close', (event) => { if (debug) console.log('[Discord RPC] Status: Closed', event); });
-        this.discordIPC.on('error', (event) => { if (debug) console.log('[Discord RPC] Error', event); });
+        if (debug) {
+            this.discordIPC.on('open', console.log('[Discord RPC] Status: Opened'));
+            this.discordIPC.on('close', (event) => console.log('[Discord RPC] Status: Closed', event));
+            this.discordIPC.on('error', (event) => console.log('[Discord RPC] Error: ', event));
+        }
         
         this.discordIPC.on('message', (event) => {
             switch (event.evt) {
@@ -19,7 +21,7 @@ module.exports = class DiscordRPC extends EventEmitter {
                 default:
                     if (debug) console.log('[Discord RPC] Message: ', event);
                     break;
-        }
+            }
         });
         this.discordIPC.connect();
     }
