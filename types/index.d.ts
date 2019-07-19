@@ -1,14 +1,6 @@
 declare module 'discord-urpc' {
     import { Socket } from 'net';
     import { EventEmitter } from 'events';
-    
-    export class DiscordRPC extends EventEmitter {
-        constructor(info: DiscordRPCInfo);
-
-        public discordIPC: DiscordIPC;
-        public send(command: string, args?: any): void;
-        public on(event: 'ready', listener: () => void): this;
-    }
 
     export class DiscordIPC extends EventEmitter {
         constructor(clientID: string);
@@ -27,5 +19,13 @@ declare module 'discord-urpc' {
     export interface DiscordRPCInfo {
         clientID: string;
         debug: boolean;
+    }
+    
+    export default class DiscordRPC extends EventEmitter {
+        constructor(info: DiscordRPCInfo);
+
+        public discordIPC: DiscordIPC;
+        public send(command: string, args?: any): void;
+        public on(event: 'ready', listener: () => void): this;
     }
 }
